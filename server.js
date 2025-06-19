@@ -26,4 +26,18 @@ function writeEntries(entries){
 app.get("/entries", (req,res) => {
     const entries = readEntries();
     res.json(entries);
-})
+});
+
+//POST(add) an entry
+app.post("/entries", (req,res) => {
+    const entries = readEntries();
+    const newEntry = {
+        id: Date.now().toString(),  //unique id
+        title: req.body.title,
+        content: req.body.content,
+        date: new Date().toISOString()
+    };
+    entries.push(newEntry);
+    writeEntries(entries);
+    res.status(201).json(newEntry);  //this step sends http response back to the client.. with code 201 means "created"
+});
