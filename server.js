@@ -41,3 +41,11 @@ app.post("/entries", (req,res) => {
     writeEntries(entries);
     res.status(201).json(newEntry);  //this step sends http response back to the client.. with code 201 means "created"
 });
+
+//DELETE an entry by id
+app.delete("/entries/:id", (req,res) => {
+    const entries = readEntries();
+    const filtered = entries.filter(entry => entry.id !== req.params.id);
+    writeEntries(filtered);
+    res.status(204).send(); //success with no response body
+});
