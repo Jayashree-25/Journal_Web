@@ -21,3 +21,9 @@ function writeEntries(entries){
     //This specifies indentation of 2 spaces per level, making the output pretty-printed and easy to read.
     fs.writeFileSyn("entries.json", JSON.stringify(entries,null,2));   //(value, replacer, space)
 }
+
+//GET all entries
+app.get("/entries", (req,res) => {
+    const entries = readEntries();
+    res.json(entries);
+})
