@@ -4,7 +4,7 @@ const fs = require("fs");  //for read/write
 const cors = require("cors");  //allow frontend access
 
 const app = express();  //create express app
-const port = 5000;
+const PORT = 5000;
 
 app.use(cors());   // Enable frontend access
 app.use(bodyParser.json());   // Accept JSON input
@@ -48,4 +48,8 @@ app.delete("/entries/:id", (req,res) => {
     const filtered = entries.filter(entry => entry.id !== req.params.id);
     writeEntries(filtered);
     res.status(204).send(); //success with no response body
+});
+
+app.listen(PORT, () => {
+    console.log(`server is running well with ${PORT}`);
 });
