@@ -1,5 +1,5 @@
 const express = require("express");  // Import Express
-const bodyParser = require("body-parse");  //parse json request
+const bodyParser = require("body-parser");  //parse json request
 const fs = require("fs");  //for read/write
 const cors = require("cors");  //allow frontend access
 
