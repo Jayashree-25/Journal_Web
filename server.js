@@ -19,7 +19,7 @@ function writeEntries(entries){
     //entries: This is the JavaScript object or array you want to convert to a JSON string. 
     //null: This means no special filtering (it includes all properties). 
     //This specifies indentation of 2 spaces per level, making the output pretty-printed and easy to read.
-    fs.writeFileSyn("entries.json", JSON.stringify(entries,null,2));   //(value, replacer, space)
+    fs.writeFileSync("entries.json", JSON.stringify(entries,null,2));   //(value, replacer, space)
 }
 
 //GET all entries
@@ -48,6 +48,23 @@ app.delete("/entries/:id", (req,res) => {
     const filtered = entries.filter(entry => entry.id !== req.params.id);
     writeEntries(filtered);
     res.status(204).send(); //success with no response body
+});
+
+app.put("entries/:id", (req,res) => {
+    const entries = readEntries();
+    const entryId = req.params.id;  //gets the value of id parameter from the URL
+    const index = entries.findIndex(entry => entry.Id === entryId);
+
+    if(index == -1){
+        return res.status(404).json({ message: "Entry not found" });
+    }
+
+    //update if provided
+    entries[index].title = req.body.title || entries[index].title;
+    entries[index].content = req.body.content || entries[index].content;
+
+    writeEntries(entries); // save updated entries
+    res.json(entries[index])  //returns updated entry
 });
 
 app.listen(PORT, () => {
