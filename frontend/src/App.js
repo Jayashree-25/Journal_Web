@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 function App(){
   //entries: variable to hold journal data, setEntries: update the variable
   const [entries, setEntries] = useState([]); //So at first, entries = []
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/entries")
@@ -13,9 +15,68 @@ function App(){
     .catch(err => console.error("error in finding entries..!"));
   }, []);  // Empty dependency array = run only once on page load
 
+  //handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();  //prevent page reload
+
+    const newEntry = {title, content};
+
+    fetch("http://localhost:5000/entries" , {
+      method : "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(newEntry),
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Added entry:", data);
+      setEntries(prevEntries => [data, ...prevEntries]);  //add new entry to top of list
+      setTitle("");  //clear form after submit
+      setContent("");
+    })
+    .catch(err => console.error("error in adding entries..!"));
+  }
+
   return(
     <div style={{padding: "2rem", fontFamily: "Arial"}}>
       <h1>My Journal</h1>
+
+      <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
+        
+        <div style={{ marginBottom: "1rem" }}>
+          <input
+            type="text"
+            placeholder="Entry Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "1rem" }}>
+          <textarea
+            placeholder="Write your thoughts..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            required
+            rows={4}
+            style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
+          />
+        </div>
+
+        <button
+        type="submit"
+        style={{
+          padding: "0.5rem 1rem",
+          backgroundColor: "yellow",
+          fontSize: "0.9rem",
+          color: "#000",
+          border: "none",
+          borderRadius: "4px",
+        }}>
+          Add Entry
+        </button>
+      </form>
 
       {entries.length === 0 ? (
         <p>No journal entries yet</p>
