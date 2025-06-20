@@ -36,6 +36,18 @@ function App(){
     .catch(err => console.error("error in adding entries..!"));
   }
 
+  //handle delete
+  const handleDelete = (id) => {
+    fetch(`http://localhost:5000/entries/${id}` , {
+      method: "DELETE",
+    })
+    .then(() => {
+      //remove entry
+      setEntries(prevEntries => prevEntries.filter(entry => entry.id !== id));
+    })
+    .catch(err => console.error("error in deleting entries..!"));
+  }
+
   return(
     <div style={{padding: "2rem", fontFamily: "Arial"}}>
       <h1>My Journal</h1>
@@ -68,9 +80,9 @@ function App(){
         type="submit"
         style={{
           padding: "0.5rem 1rem",
-          backgroundColor: "yellow",
+          backgroundColor: "#dc3545",
           fontSize: "0.9rem",
-          color: "#000",
+          color: "#fff",
           border: "none",
           borderRadius: "4px",
         }}>
@@ -87,6 +99,24 @@ function App(){
               <h3>{entry.title}</h3>
               <p>{entry.content}</p>
               <small>{new Date(entry.date).toLocaleString()}</small> 
+
+              <br />
+
+              <button
+                onClick={() => handleDelete(entry.id)}
+                style={{
+                  marginTop: "0.5rem",
+                  padding: "0.4rem 0.8rem",
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Delete
+              </button>
+
             </li>
           ))}
         </ul>
