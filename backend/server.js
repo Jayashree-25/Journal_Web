@@ -50,10 +50,10 @@ app.delete("/entries/:id", (req,res) => {
     res.status(204).send(); //success with no response body
 });
 
-app.put("entries/:id", (req,res) => {
+app.put("/entries/:id", (req,res) => {
     const entries = readEntries();
     const entryId = req.params.id;  //gets the value of id parameter from the URL
-    const index = entries.findIndex(entry => entry.Id === entryId);
+    const index = entries.findIndex(entry => entry.id === entryId);
 
     if(index == -1){
         return res.status(404).json({ message: "Entry not found" });
