@@ -41,8 +41,8 @@ const entrySchema = new mongoose.Schema({
 const Entry = mongoose.Model("Entry", entrySchema);
 
 //GET all entries
-app.get("/entries", (req,res) => {
-    const entries = readEntries();
+app.get("/entries", async (req,res) => {
+    const entries = await Entry.find().sort({ date: -1});  //fetches sort them.. await ensures func wait until the db returns the result 
     res.json(entries);
 });
 
