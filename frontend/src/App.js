@@ -47,14 +47,14 @@ function App() {
     })
       .then(() => {
         //remove entry
-        setEntries(prevEntries => prevEntries.filter(entry => entry.id !== id));
+        setEntries(prevEntries => prevEntries.filter(entry => entry._id !== id));
       })
       .catch(err => console.error("error in deleting entries..!"));
   }
 
   //when edit is clicked
   const startEditing = (entry) => {
-    setEditId(entry.id);
+    setEditId(entry._id);
     setEditTitle(entry.title);
     setEditContent(entry.content);
   };
@@ -80,7 +80,7 @@ function App() {
       .then((res) => res.json())
       .then((updatedEntry) => {
         console.log("server returned: ", updatedEntry)
-        setEntries(prevEntries => prevEntries.map(entry => (entry.id === editId ? updatedEntry : entry))
+        setEntries(prevEntries => prevEntries.map(entry => (entry._id === editId ? updatedEntry : entry))
         );
         cancelEdit();
       })
@@ -134,9 +134,9 @@ function App() {
       ) : (
         <ul>
           {entries.map(entry => (  //loops through every entry
-            <li key={entry.id} style={{ marginBottom: "1.5rem" }}>
+            <li key={entry._id} style={{ marginBottom: "1.5rem" }}>
               {/* check if we are editing*/}
-              {editId === entry.id ? (
+              {editId === entry._id ? (
                 <form onSubmit={handleUpdate}>
                   <input
                     type="text"
@@ -179,7 +179,7 @@ function App() {
                   </button>
 
                   <button
-                    onClick={() => handleDelete(entry.id)}
+                    onClick={() => handleDelete(entry._id)}
                     style={{
                       marginTop: "0.5rem",
                       padding: "0.4rem 0.8rem",
