@@ -9,6 +9,7 @@ const PORT = 5000;
 
 app.use(cors());   // Enable frontend access
 app.use(bodyParser.json());   // Accept JSON input
+app.use(express.json());
 
 
 // function readEntries(){
@@ -31,6 +32,13 @@ mongoose.connect("mongodb://localhost:27017/journalDB", {
 .then(() => {console.log("mongoDB connected")})
 .catch(err => console.error("connection error"));
 
+//-------mongoDB schema and model----------//
+const entrySchema = new mongoose.Schema({
+    title: String,
+    content: String,
+    date: { type: Date, default: Date.now },
+});
+const Entry = mongoose.Model("Entry", entrySchema);
 
 //GET all entries
 app.get("/entries", (req,res) => {
