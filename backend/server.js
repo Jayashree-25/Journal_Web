@@ -1,7 +1,8 @@
 const express = require("express");  // Import Express
 const bodyParser = require("body-parser");  //parse json request
-const fs = require("fs");  //for read/write
+// const fs = require("fs");  //for read/write
 const cors = require("cors");  //allow frontend access
+const mongoose = require("mongoose");  //Import mongoose
 
 const app = express();  //create express app
 const PORT = 5000;
@@ -10,17 +11,26 @@ app.use(cors());   // Enable frontend access
 app.use(bodyParser.json());   // Accept JSON input
 
 
-function readEntries(){
-    const data = fs.readFileSync("entries.json", "utf8");   //doubt
-    return JSON.parse(data);  //convert to JavaScript array 
-}
+// function readEntries(){
+//     const data = fs.readFileSync("entries.json", "utf8");   //doubt
+//     return JSON.parse(data);  //convert to JavaScript array 
+// }
 
-function writeEntries(entries){
-    //entries: This is the JavaScript object or array you want to convert to a JSON string. 
-    //null: This means no special filtering (it includes all properties). 
-    //This specifies indentation of 2 spaces per level, making the output pretty-printed and easy to read.
-    fs.writeFileSync("entries.json", JSON.stringify(entries,null,2));   //(value, replacer, space)
-}
+// function writeEntries(entries){
+//     //entries: This is the JavaScript object or array you want to convert to a JSON string. 
+//     //null: This means no special filtering (it includes all properties). 
+//     //This specifies indentation of 2 spaces per level, making the output pretty-printed and easy to read.
+//     fs.writeFileSync("entries.json", JSON.stringify(entries,null,2));   //(value, replacer, space)
+// }
+
+//-------mongoDB connection-------//
+mongoose.connect("mongodb://localhost:27017/journalDB", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => {console.log("mongoDB connected")})
+.catch(err => console.error("connection error"));
+
 
 //GET all entries
 app.get("/entries", (req,res) => {
