@@ -38,7 +38,7 @@ const entrySchema = new mongoose.Schema({
     content: String,
     date: { type: Date, default: Date.now },
 });
-const Entry = mongoose.Model("Entry", entrySchema);
+const Entry = mongoose.model("Entry", entrySchema);
 
 //GET all entries
 app.get("/entries", async (req, res) => {
