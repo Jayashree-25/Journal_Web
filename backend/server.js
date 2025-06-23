@@ -63,7 +63,7 @@ app.put("/entries/:id", async (req, res) => {
     const updated = await Entry.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
         content: req.body.content,
-    }, { new: true });
+    }, { new: true }); //this tells mongoose to return the updated document
 
     if (!updated) return res.status(404).json({ message: "entry not found" });
     res.json(updated);
