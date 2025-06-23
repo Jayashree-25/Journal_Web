@@ -29,8 +29,8 @@ mongoose.connect("mongodb://localhost:27017/journalDB", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-.then(() => {console.log("mongoDB connected")})
-.catch(err => console.error("connection error"));
+    .then(() => { console.log("mongoDB connected") })
+    .catch(err => console.error("connection error"));
 
 //-------mongoDB schema and model----------//
 const entrySchema = new mongoose.Schema({
@@ -41,38 +41,32 @@ const entrySchema = new mongoose.Schema({
 const Entry = mongoose.Model("Entry", entrySchema);
 
 //GET all entries
-app.get("/entries", async (req,res) => {
-    const entries = await Entry.find().sort({ date: -1});  //fetches sort them.. await ensures func wait until the db returns the result 
+app.get("/entries", async (req, res) => {
+    const entries = await Entry.find().sort({ date: -1 });  //fetches sort them.. await ensures func wait until the db returns the result 
     res.json(entries);
 });
 
 //POST(add) an entry
-app.post("/entries", async (req,res) => {
+app.post("/entries", async (req, res) => {
     const entries = await new Entry(req.body).save();
     res.status(201).json(entries);  //http code 201 means created
 });
 
 //DELETE an entry by id
-app.delete("/entries/:id", async (req,res) => {
+app.delete("/entries/:id", async (req, res) => {
     await Entry.findByIdAndDelete(req.params.id); //gets the value of id parameter from the URL
     res.sendStatus(204);
 });
 
-app.put("/entries/:id", (req,res) => {
-    const entries = readEntries();
-    const entryId = req.params.id;  //gets the value of id parameter from the URL
-    const index = entries.findIndex(entry => entry.id === entryId);
+//UPDATE 
+app.put("/entries/:id", async (req, res) => {
+    const updated = await Entry.findByIdAndUpdate(req.params.id, {
+        title: req.body.title,
+        content: req.body.content,
+    }, { new: true });
 
-    if(index == -1){
-        return res.status(404).json({ message: "Entry not found" });
-    }
-
-    //update if provided
-    entries[index].title = req.body.title || entries[index].title;
-    entries[index].content = req.body.content || entries[index].content;
-
-    writeEntries(entries); // save updated entries
-    res.json(entries[index])  //returns updated entry
+    if (!updated) return res.status(404).json({ message: "entry not found" });
+    res.json(updated);
 });
 
 app.listen(PORT, () => {
