@@ -53,11 +53,9 @@ app.post("/entries", async (req,res) => {
 });
 
 //DELETE an entry by id
-app.delete("/entries/:id", (req,res) => {
-    const entries = readEntries();
-    const filtered = entries.filter(entry => entry.id !== req.params.id);
-    writeEntries(filtered);
-    res.status(204).send(); //success with no response body
+app.delete("/entries/:id", async (req,res) => {
+    await Entry.findByIdAndDelete(req.params.id); //gets the value of id parameter from the URL
+    res.sendStatus(204);
 });
 
 app.put("/entries/:id", (req,res) => {
