@@ -89,7 +89,12 @@ function App() {
 
   return (
     <div style={{ padding: "2rem", fontFamily: "Arial" }}>
-      <h1>My Journal</h1>
+      <h1 style={{
+        fontFamily: "Cursive",
+        fontSize: "2.5rem",
+        fontWeight: "600",
+        textShadow: "1px 1px 2px rgb(64, 141, 172)"
+      }}>My Journal</h1>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
 
@@ -100,7 +105,7 @@ function App() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
+            style={{ fontFamily: "Tacoma", fontSize: "1rem", padding: "0.5rem", width: "100%" }}
           />
         </div>
 
@@ -111,7 +116,7 @@ function App() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows={4}
-            style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
+            style={{ fontFamily: "Tacoma", fontSize: "1rem", padding: "0.5rem", width: "100%" }}
           />
         </div>
 
@@ -123,7 +128,9 @@ function App() {
             fontSize: "0.9rem",
             color: "#fff",
             border: "none",
+            fontFamily: "Arial Black",
             borderRadius: "4px",
+            cursor: "pointer",
           }}>
           Add Entry
         </button>
@@ -156,9 +163,11 @@ function App() {
                 </form>
               ) : (
                 <>
-                  <h3>{entry.title}</h3>
-                  <p>{entry.content}</p>
-                  <small>{new Date(entry.date).toLocaleString()}</small>
+                  <h3 style={{ fontFamily: "Georgia", fontSize: "1.4rem", fontWeight: "bold" }}>{entry.title}</h3>
+
+                  <p style={{ fontFamily: "Roboto", fontSize: "1rem", lineHeight: "1.6" }}>{entry.content}</p>
+
+                  <small style={{ fontFamily: "Courier New", fontSize: "0.85rem", color: "#555" }}>{new Date(entry.date).toLocaleString()}</small>
 
                   <br />
 
