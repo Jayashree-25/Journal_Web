@@ -46,8 +46,7 @@ function App() {
       method: "DELETE",
     })
       .then(() => {
-        //remove entry
-        setEntries(prevEntries => prevEntries.filter(entry => entry._id !== id));
+        setEntries(prevEntries => prevEntries.filter(entry => entry._id !== id)); //remove entry
       })
       .catch(err => console.error("error in deleting entries..!"));
   }
