@@ -4,8 +4,8 @@ A simple full-stack Journal App built using React (Frontend), Express + Node.js 
 
 ## Features
 
-🧾 Add new journal entries with title and content
-✏️ Edit existing entries
-🗑️ Delete entries
-🌐 Backend with Express & MongoDB
-📦 Frontend with React and inline styling
+--🧾 Add new journal entries with title and content
+--✏️ Edit existing entries
+--🗑️ Delete entries
+--🌐 Backend with Express & MongoDB
+--📦 Frontend with React and inline styling
