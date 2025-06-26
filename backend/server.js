@@ -83,6 +83,33 @@ app.post("/register", async (req, res) => {
     }
 });
 
+//-----Login Route-----//
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "mysecretkey";
+
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if(!user){
+        res.status(401),json({ error: "Invalid username or password" });
+    }
+
+    const isMatch = await bcryptjs.compare(password, user.password);
+    if(!isMatch){
+        res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    //Create JWT token
+    const token = jwt.sign(
+        { id: user._id, username: user.username },
+        JWT_SECRET,
+        { expiresIn: "2h" }
+    );
+
+     res.json({ token, username: user.username });
+})
+
 app.listen(PORT, () => {
     console.log(`server is running well with ${PORT}`);
 });
