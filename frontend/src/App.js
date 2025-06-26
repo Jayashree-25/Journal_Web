@@ -99,19 +99,37 @@ function App() {
   }
 
   return (
-    <div>
-      {/* Login/Register Component */}
-      <LoginRegister onLogin={handleLogin} onLogout={handleLogout} username={username} />
+    <div style={{
+      backgroundColor: "#282a36",
+      minHeight: "100vh",
+      fontFamily: "Arial",
+      color: "#f8f8f2",
+    }}>
+      {!username ? (
+        // If not logged in, show login/register form
+        <LoginRegister onLogin={handleLogin} />
+      ) : (
+        // If logged in, show journal UI
+        <div style={{ padding: "2rem" }}>
+          <div style={{ marginBottom: "1rem" }}>
+            <p>
+              Logged in as: <span style={{ color: "#50fa7b", fontWeight: "bold" }}>{username}</span>
+            </p>
+            <button
+              onClick={handleLogout}
+              style={{
+                backgroundColor: "#ff5555",
+                color: "#fff",
+                padding: "0.5rem 1rem",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                marginTop: "0.5rem"
+              }}>
+              Logout
+            </button>
+          </div>
 
-      {/* Show journal UI only if user is logged in */}
-      {username && (
-        <div style={{
-          padding: "2rem",
-          fontFamily: "Arial",
-          backgroundColor: "#282a36",
-          minHeight: "100vh",
-          color: "#f8f8f2",
-        }}>
           <h1 style={{
             fontFamily: "Cursive",
             fontSize: "2.5rem",
@@ -121,7 +139,6 @@ function App() {
           }}>My Journal</h1>
 
           <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
-
             <div style={{ marginBottom: "1rem" }}>
               <input
                 type="text"
@@ -180,9 +197,8 @@ function App() {
             <p>No journal entries yet</p>
           ) : (
             <ul>
-              {entries.map(entry => (  //loops through every entry
+              {entries.map(entry => (
                 <li key={entry._id} style={{ marginBottom: "1.5rem" }}>
-                  {/* check if we are editing*/}
                   {editId === entry._id ? (
                     <form onSubmit={handleUpdate}>
                       <input
@@ -204,13 +220,9 @@ function App() {
                   ) : (
                     <>
                       <h3 style={{ fontFamily: "Georgia", fontSize: "1.4rem", fontWeight: "bold" }}>{entry.title}</h3>
-
                       <p style={{ fontFamily: "Roboto", fontSize: "1rem", lineHeight: "1.6" }}>{entry.content}</p>
-
                       <small style={{ fontFamily: "Courier New", fontSize: "0.85rem", color: "#6272a4", fontWeight: "550" }}>{new Date(entry.date).toLocaleString()}</small>
-
                       <br />
-
                       <button
                         onClick={() => startEditing(entry)}
                         style={{
@@ -226,7 +238,6 @@ function App() {
                       >
                         Edit
                       </button>
-
                       <button
                         onClick={() => handleDelete(entry._id)}
                         style={{
@@ -251,6 +262,7 @@ function App() {
       )}
     </div>
   );
+
 }
 
 export default App;
