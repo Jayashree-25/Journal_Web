@@ -31,7 +31,7 @@ const Entry = mongoose.model("Entry", entrySchema);
 const bcryptjs = require("bcryptjs");
 //user schema
 const userSchema = new mongoose.Schema({
-    username: {type: String, unique: true},
+    username: { type: String, unique: true },
     password: String,
 });
 const User = mongoose.model("User", userSchema);
@@ -63,6 +63,24 @@ app.put("/entries/:id", async (req, res) => {
 
     if (!updated) return res.status(404).json({ message: "entry not found" });
     res.json(updated);
+});
+
+//-----For user-----//
+app.post("/register", async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        const newUser = new User({ username, hashedPassword });
+        await newUser.save();
+        res.status(201).json({ message: "User registered successfully" });
+    } catch (err) {
+        if(err.code === 11000){  //duplicate username
+            res.status(400).json({ error: "Username already exists" });
+        }else{
+            res.status(500).json({ error: "Server error"})
+        }
+    }
 });
 
 app.listen(PORT, () => {
