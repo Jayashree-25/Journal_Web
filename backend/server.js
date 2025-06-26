@@ -27,6 +27,15 @@ const entrySchema = new mongoose.Schema({
 });
 const Entry = mongoose.model("Entry", entrySchema);
 
+//-----bcryptjs (password)-----//
+const bcryptjs = require("bcryptjs");
+//user schema
+const userSchema = new mongoose.Schema({
+    username: {type: String, unique: true},
+    password: String,
+});
+const User = mongoose.model("User", userSchema);
+
 //GET all entries
 app.get("/entries", async (req, res) => {
     const entries = await Entry.find().sort({ date: -1 });  //fetches sort them.. await ensures func wait until the db returns the result 
