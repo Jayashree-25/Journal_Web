@@ -87,12 +87,19 @@ function App() {
   }
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial" }}>
+    <div style={{
+      padding: "2rem",
+      fontFamily: "Arial",
+      backgroundColor: "#282a36",
+      minHeight: "100vh",
+      color: "#f8f8f2",
+    }}>
       <h1 style={{
         fontFamily: "Cursive",
         fontSize: "2.5rem",
         fontWeight: "600",
-        textShadow: "1px 1px 2px rgb(64, 141, 172)"
+        textShadow: "1px 1px 2px rgb(64, 141, 172)",
+        color: "#bd93f9",
       }}>My Journal</h1>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
@@ -104,7 +111,15 @@ function App() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            style={{ fontFamily: "Tacoma", fontSize: "1rem", padding: "0.5rem", width: "100%" }}
+            style={{
+              fontFamily: "Tacoma",
+              fontSize: "1rem",
+              padding: "0.5rem",
+              width: "100%",
+              backgroundColor: "#1e1e1e",
+              color: "#f1f1f1",
+              border: "1px solid #333",
+            }}
           />
         </div>
 
@@ -115,7 +130,15 @@ function App() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows={4}
-            style={{ fontFamily: "Tacoma", fontSize: "1rem", padding: "0.5rem", width: "100%" }}
+            style={{
+              fontFamily: "Tacoma",
+              fontSize: "1rem",
+              padding: "0.5rem",
+              width: "100%",
+              backgroundColor: "#1e1e1e",
+              color: "#f1f1f1",
+              border: "1px solid #333",
+            }}
           />
         </div>
 
@@ -123,9 +146,9 @@ function App() {
           type="submit"
           style={{
             padding: "0.5rem 1rem",
-            backgroundColor: "#dc3545",
+            backgroundColor: "#ff79c6",
             fontSize: "0.9rem",
-            color: "#fff",
+            color: "#282a36",
             border: "none",
             fontFamily: "Arial Black",
             borderRadius: "4px",
@@ -157,8 +180,8 @@ function App() {
                     required
                     style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
                   />
-                  <button type="submit" style={{ marginRight: "0.5rem" }}>Save</button>
-                  <button type="button" onClick={cancelEdit}>Cancel</button>
+                  <button type="submit" style={{ marginRight: "0.5rem", backgroundColor: "#8be9fd" }}>Save</button>
+                  <button type="button" style={{ backgroundColor: "#6272a4" }} onClick={cancelEdit}>Cancel</button>
                 </form>
               ) : (
                 <>
@@ -166,7 +189,7 @@ function App() {
 
                   <p style={{ fontFamily: "Roboto", fontSize: "1rem", lineHeight: "1.6" }}>{entry.content}</p>
 
-                  <small style={{ fontFamily: "Courier New", fontSize: "0.85rem", color: "#555" }}>{new Date(entry.date).toLocaleString()}</small>
+                  <small style={{ fontFamily: "Courier New", fontSize: "0.85rem", color: "#6272a4", fontWeight: "550" }}>{new Date(entry.date).toLocaleString()}</small>
 
                   <br />
 
@@ -175,8 +198,8 @@ function App() {
                     style={{
                       marginTop: "0.5rem",
                       padding: "0.4rem 0.8rem",
-                      backgroundColor: "#17a2b8",
-                      color: "white",
+                      backgroundColor: "#50fa7b",
+                      color: "#000",
                       border: "none",
                       borderRadius: "4px",
                       cursor: "pointer",
@@ -191,8 +214,8 @@ function App() {
                     style={{
                       marginTop: "0.5rem",
                       padding: "0.4rem 0.8rem",
-                      backgroundColor: "#dc3545",
-                      color: "white",
+                      backgroundColor: "#ff5555",
+                      color: "#000",
                       border: "none",
                       borderRadius: "4px",
                       cursor: "pointer",
