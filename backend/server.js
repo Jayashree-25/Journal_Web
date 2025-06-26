@@ -71,14 +71,14 @@ app.post("/register", async (req, res) => {
 
     try {
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const newUser = new User({ username, hashedPassword });
+        const newUser = new User({ username, password: hashedPassword });
         await newUser.save();
         res.status(201).json({ message: "User registered successfully" });
     } catch (err) {
-        if(err.code === 11000){  //duplicate username
+        if (err.code === 11000) {  //duplicate username
             res.status(400).json({ error: "Username already exists" });
-        }else{
-            res.status(500).json({ error: "Server error"})
+        } else {
+            res.status(500).json({ error: "Server error" })
         }
     }
 });
@@ -91,13 +91,13 @@ app.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username });
-    if(!user){
-        res.status(401),json({ error: "Invalid username or password" });
+    if (!user) {
+        return res.status(401), json({ error: "Invalid username or password" });
     }
 
     const isMatch = await bcryptjs.compare(password, user.password);
-    if(!isMatch){
-        res.status(401).json({ error: "Invalid username or password" });
+    if (!isMatch) {
+        return res.status(401).json({ error: "Invalid username or password" });
     }
 
     //Create JWT token
@@ -107,7 +107,7 @@ app.post("/login", async (req, res) => {
         { expiresIn: "2h" }
     );
 
-     res.json({ token, username: user.username });
+    res.json({ token, username: user.username });
 })
 
 app.listen(PORT, () => {
