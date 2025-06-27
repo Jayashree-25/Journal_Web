@@ -23,6 +23,7 @@ mongoose.connect("mongodb://localhost:27017/journalDB", {
 const entrySchema = new mongoose.Schema({
     title: String,
     content: String,
+    username: String,
     date: { type: Date, default: Date.now },
 });
 const Entry = mongoose.model("Entry", entrySchema);
@@ -44,8 +45,10 @@ app.get("/entries", async (req, res) => {
 
 //POST(add) an entry
 app.post("/entries", async (req, res) => {
-    const entries = await new Entry(req.body).save();
-    res.status(201).json(entries);  //http code 201 means created
+    const { title, content, username } = req.body;
+    const newEntry = new Entry({ title, content, username });
+    await newEntry.save();
+    res.status(201).json(newEntry);  //http code 201 means created
 });
 
 //DELETE an entry by id
