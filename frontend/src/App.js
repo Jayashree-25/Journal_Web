@@ -13,9 +13,9 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!username) return;
+    if (!username) return;
 
-    fetch(`http://localhost:5000/entries?username=${username}`)
+    fetch(`https://journal-backend-web.onrender.com/entries?username=${username}`)
       .then((res) => res.json())
       .then((data) => setEntries(data))
       .catch((err) => console.error("error in finding entries..!"));
@@ -24,7 +24,7 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newEntry = { title, content, username };
-    fetch("http://localhost:5000/entries", {
+    fetch("https://journal-backend-web.onrender.com/entries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newEntry),
@@ -38,7 +38,7 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   };
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:5000/entries/${id}`, { method: "DELETE" })
+    fetch(`https://journal-backend-web.onrender.com/entries/${id}`, { method: "DELETE" })
       .then(() => setEntries((prev) => prev.filter((e) => e._id !== id)));
   };
 
@@ -56,7 +56,7 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/entries/${editId}`, {
+    fetch(`https://journal-backend-web.onrender.com/entries/${editId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title: editTitle, content: editContent }),
