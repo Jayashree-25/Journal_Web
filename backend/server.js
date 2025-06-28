@@ -24,7 +24,7 @@ app.use(cors({
   optionsSuccessStatus: 200, // <- add this
 }));
 
-app.options("*", cors());
+app.options("/*", cors());
 app.use(bodyParser.json());   // Accept JSON input
 app.use(express.json());
 
