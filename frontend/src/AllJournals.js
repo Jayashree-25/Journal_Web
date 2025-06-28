@@ -10,7 +10,7 @@ function AllJournals({ username }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("http://localhost:5000/entries-all")
+        fetch("https://journal-backend-web.onrender.com/entries-all")
             .then(res => res.json())
             .then(data => setEntries(data))
             .catch(err => console.error("error in fetching..."))
@@ -31,7 +31,7 @@ function AllJournals({ username }) {
     const handleUpdate = (e) => {
         e.preventDefault();
 
-        fetch(`http://localhost:5000/entries/${editId}`, {
+        fetch(`https://journal-backend-web.onrender.com/entries/${editId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: editTitle, content: editContent }),
@@ -47,7 +47,7 @@ function AllJournals({ username }) {
     };
 
     const handleDelete = (id) => {
-        fetch(`http://localhost:5000/entries/${id}`, {
+        fetch(`https://journal-backend-web.onrender.com/entries/${id}`, {
             method: "DELETE"
         })
             .then(() => {
