@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import {BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import LoginRegister from "./LoginRegister";  // Login/Register component
+import AllJournals from "./AllJournals";
 
 function App() {
   const [entries, setEntries] = useState([]); //entries: variable to hold journal data, setEntries: update the variable
