@@ -39,6 +39,10 @@ const User = mongoose.model("User", userSchema);
 
 //GET all entries
 app.get("/entries", async (req, res) => {
+    const username = req.query.username;
+    if(!username) {
+        return res.status(400).json({ error: "username required" });
+    }
     const entries = await Entry.find().sort({ date: -1 });  //fetches sort them.. await ensures func wait until the db returns the result 
     res.json(entries);
 });
