@@ -95,7 +95,7 @@ app.post("/login", async (req, res) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-        return res.status(401), json({ error: "Invalid username or password" });
+        return res.status(401).json({ error: "Invalid username or password" });
     }
 
     const isMatch = await bcryptjs.compare(password, user.password);
