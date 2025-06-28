@@ -8,7 +8,7 @@ export default function LoginRegister({ onLogin, onLogout, username }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://localhost:5000/${isLogin ? "login" : "register"}`;
+    const url = `https://journal-backend-web.onrender.com/${isLogin ? "login" : "register"}`;
 
     try {
       const res = await fetch(url, {
