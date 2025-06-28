@@ -7,8 +7,19 @@ const mongoose = require("mongoose");  //Import mongoose
 const app = express();  //create express app
 const PORT = 5000;
 
+const allowedOrigins = [
+  "https://journal-web-nu.vercel.app",
+  "http://localhost:3000" // optional for local testing
+];
+
 app.use(cors({
-  origin: "https://journal-frontend.vercel.app",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
