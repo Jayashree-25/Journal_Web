@@ -23,6 +23,9 @@ export default function LoginRegister({ onLogin, onLogout, username }) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.username);
         onLogin(data.username);
+      } else if (data.message && !isLogin) {
+        alert("Registered successfully. Please login.");
+        setIsLogin(true); // Switch to login form
       } else {
         alert(data.error || "Something went wrong.");
       }
@@ -67,7 +70,7 @@ export default function LoginRegister({ onLogin, onLogout, username }) {
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           required
-          autoComplete="current-password" 
+          autoComplete="current-password"
           style={{
             display: "block",
             marginBottom: "1rem",
