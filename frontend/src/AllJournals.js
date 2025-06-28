@@ -7,7 +7,7 @@ function AllJournals({ username }) {
     const [editContent, setEditContent] = useState("");
 
     useEffect(() => {
-        fetch("http://localhost:5000/entries")
+        fetch("http://localhost:5000/entries-all")
             .then(res => res.json())
             .then(data => setEntries(data))
             .catch(err => console.error("error in fetching..."))

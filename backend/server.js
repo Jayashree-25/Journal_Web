@@ -43,7 +43,7 @@ app.get("/entries", async (req, res) => {
     if(!username) {
         return res.status(400).json({ error: "username required" });
     }
-    const entries = await Entry.find().sort({ date: -1 });  //fetches sort them.. await ensures func wait until the db returns the result 
+    const entries = await Entry.find({ username }).sort({ date: -1 });  //fetches sort them.. await ensures func wait until the db returns the result 
     res.json(entries);
 });
 
@@ -71,6 +71,18 @@ app.put("/entries/:id", async (req, res) => {
     if (!updated) return res.status(404).json({ message: "entry not found" });
     res.json(updated);
 });
+
+//-----all journal-----//
+// GET all entries from all users
+app.get("/entries-all", async (req, res) => {
+  try {
+    const entries = await Entry.find().sort({ date: -1 });
+    res.json(entries);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch all entries" });
+  }
+});
+
 
 //-----For user-----//
 app.post("/register", async (req, res) => {

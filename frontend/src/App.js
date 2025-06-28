@@ -13,15 +13,17 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/entries")
+    if(!username) return;
+
+    fetch(`http://localhost:5000/entries?username=${username}`)
       .then((res) => res.json())
       .then((data) => setEntries(data))
       .catch((err) => console.error("error in finding entries..!"));
-  }, [setEntries]);
+  }, [setEntries, username]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newEntry = { title, content };
+    const newEntry = { title, content, username };
     fetch("http://localhost:5000/entries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
