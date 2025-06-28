@@ -7,7 +7,11 @@ const mongoose = require("mongoose");  //Import mongoose
 const app = express();  //create express app
 const PORT = 5000;
 
-app.use(cors());   // Enable frontend access
+app.use(cors({
+  origin: "https://journal-frontend.vercel.app",
+  credentials: true
+}));
+
 app.use(bodyParser.json());   // Accept JSON input
 app.use(express.json());
 
