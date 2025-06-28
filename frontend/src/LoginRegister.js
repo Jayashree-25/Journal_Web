@@ -67,6 +67,7 @@ export default function LoginRegister({ onLogin, onLogout, username }) {
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           required
+          autoComplete="current-password" 
           style={{
             display: "block",
             marginBottom: "1rem",
