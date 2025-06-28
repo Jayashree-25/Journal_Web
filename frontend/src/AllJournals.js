@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function AllJournals({ username }) {
     const [entries, setEntries] = useState([]);
     const [editId, setEditId] = useState(null);
     const [editTitle, setEditTitle] = useState("");
     const [editContent, setEditContent] = useState("");
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch("http://localhost:5000/entries-all")
@@ -30,7 +33,7 @@ function AllJournals({ username }) {
 
         fetch(`http://localhost:5000/entries/${editId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application.json" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: editTitle, content: editContent }),
         })
             .then(res => res.json())
