@@ -9,7 +9,7 @@ const PORT = 5000;
 
 const allowedOrigins = [
   "https://journal-web-nu.vercel.app",
-  "http://localhost:3000" // optional for local testing
+  "http://localhost:3000"
 ];
 
 app.use(cors({
@@ -20,9 +20,11 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200, // <- add this
 }));
 
+app.options("*", cors());
 app.use(bodyParser.json());   // Accept JSON input
 app.use(express.json());
 
