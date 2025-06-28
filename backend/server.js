@@ -12,12 +12,9 @@ app.use(bodyParser.json());   // Accept JSON input
 app.use(express.json());
 
 //-------mongoDB connection-------//
-mongoose.connect("process.env.MONGO_URI", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => { console.log("mongoDB connected") })
-    .catch(err => console.error("connection error"));
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.error("MongoDB connection error:", err.message));
 
 //-------mongoDB schema and model----------//
 const entrySchema = new mongoose.Schema({
