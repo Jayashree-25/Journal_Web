@@ -17,3 +17,7 @@ A simple full-stack Journal App built using React (Frontend), Express + Node.js 
 
 ## 🤝 Contributing
 Feel free to submit pull requests or suggest improvements!
+
+## 📄 License
+This project is licensed under the **MIT License**.  
+See the [LICENSE](./LICENSE) file for details.
