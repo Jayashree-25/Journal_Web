@@ -1,15 +1,20 @@
-const express = require("express");  // Import Express
-const bodyParser = require("body-parser");  //parse json request
-// const fs = require("fs");  //for read/write
-const cors = require("cors");  //allow frontend access
-const mongoose = require("mongoose");  //Import mongoose
+require("dotenv").config();
 
-const app = express();  //create express app
-const PORT = 5000;
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
+const app = express();
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || "mysecretkey";
+
+// Allow frontend URLs
 const allowedOrigins = [
   "https://journal-web-nu.vercel.app",
-  "http://localhost:3000"
+  "http://localhost:3000",
 ];
 
 app.use(cors({
@@ -21,127 +26,123 @@ app.use(cors({
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200, // <- add this
+  optionsSuccessStatus: 200,
 }));
 
-app.use(bodyParser.json());   // Accept JSON input
+app.use(bodyParser.json());
 app.use(express.json());
 
-//-------mongoDB connection-------//
-mongoose.connect(process.env.MONGO_URI)
+// ✅ MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 .then(() => console.log("MongoDB connected"))
 .catch(err => console.error("MongoDB connection error:", err.message));
 
-//-------mongoDB schema and model----------//
+// ====== Mongoose Schemas ====== //
 const entrySchema = new mongoose.Schema({
-    title: String,
-    content: String,
-    username: String,
-    date: { type: Date, default: Date.now },
+  title: String,
+  content: String,
+  username: String,
+  date: { type: Date, default: Date.now },
 });
 const Entry = mongoose.model("Entry", entrySchema);
 
-//-----bcryptjs (password)-----//
-const bcryptjs = require("bcryptjs");
-//user schema
 const userSchema = new mongoose.Schema({
-    username: { type: String, unique: true },
-    password: String,
+  username: { type: String, unique: true },
+  password: String,
 });
 const User = mongoose.model("User", userSchema);
 
-//GET all entries
+// ====== Routes ====== //
+
+// Get entries for a user
 app.get("/entries", async (req, res) => {
-    const username = req.query.username;
-    if(!username) {
-        return res.status(400).json({ error: "username required" });
-    }
-    const entries = await Entry.find({ username }).sort({ date: -1 });  //fetches sort them.. await ensures func wait until the db returns the result 
-    res.json(entries);
+  const username = req.query.username;
+  if (!username) {
+    return res.status(400).json({ error: "Username required" });
+  }
+  const entries = await Entry.find({ username }).sort({ date: -1 });
+  res.json(entries);
 });
 
-//POST(add) an entry
+// Add entry
 app.post("/entries", async (req, res) => {
-    const { title, content, username } = req.body;
-    const newEntry = new Entry({ title, content, username });
-    await newEntry.save();
-    res.status(201).json(newEntry);  //http code 201 means created
+  const { title, content, username } = req.body;
+  const newEntry = new Entry({ title, content, username });
+  await newEntry.save();
+  res.status(201).json(newEntry);
 });
 
-//DELETE an entry by id
+// Delete entry
 app.delete("/entries/:id", async (req, res) => {
-    await Entry.findByIdAndDelete(req.params.id); //gets the value of id parameter from the URL
-    res.sendStatus(204);
+  await Entry.findByIdAndDelete(req.params.id);
+  res.sendStatus(204);
 });
 
-//UPDATE 
+// Update entry
 app.put("/entries/:id", async (req, res) => {
-    const updated = await Entry.findByIdAndUpdate(req.params.id, {
-        title: req.body.title,
-        content: req.body.content,
-    }, { new: true }); //this tells mongoose to return the updated document
-
-    if (!updated) return res.status(404).json({ message: "entry not found" });
-    res.json(updated);
+  const updated = await Entry.findByIdAndUpdate(
+    req.params.id,
+    { title: req.body.title, content: req.body.content },
+    { new: true }
+  );
+  if (!updated) return res.status(404).json({ message: "Entry not found" });
+  res.json(updated);
 });
 
-//-----all journal-----//
-// GET all entries from all users
+// Get all users’ entries
 app.get("/entries-all", async (req, res) => {
   try {
     const entries = await Entry.find().sort({ date: -1 });
     res.json(entries);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch all entries" });
+    res.status(500).json({ error: "Failed to fetch entries" });
   }
 });
 
-
-//-----For user-----//
+// Register
 app.post("/register", async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        const hashedPassword = await bcryptjs.hash(password, 10);
-        const newUser = new User({ username, password: hashedPassword });
-        await newUser.save();
-        res.status(201).json({ message: "User registered successfully" });
-    } catch (err) {
-        if (err.code === 11000) {  //duplicate username
-            res.status(400).json({ error: "Username already exists" });
-        } else {
-            res.status(500).json({ error: "Server error" })
-        }
+  const { username, password } = req.body;
+  try {
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    const newUser = new User({ username, password: hashedPassword });
+    await newUser.save();
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (err) {
+    if (err.code === 11000) {
+      res.status(400).json({ error: "Username already exists" });
+    } else {
+      res.status(500).json({ error: "Server error" });
     }
+  }
 });
 
-//-----Login Route-----//
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = "mysecretkey";
-
+// Login
 app.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    const user = await User.findOne({ username });
-    if (!user) {
-        return res.status(401).json({ error: "Invalid username or password" });
-    }
+  const user = await User.findOne({ username });
+  if (!user) {
+    return res.status(401).json({ error: "Invalid username or password" });
+  }
 
-    const isMatch = await bcryptjs.compare(password, user.password);
-    if (!isMatch) {
-        return res.status(401).json({ error: "Invalid username or password" });
-    }
+  const isMatch = await bcryptjs.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({ error: "Invalid username or password" });
+  }
 
-    //Create JWT token
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        JWT_SECRET,
-        { expiresIn: "2h" }
-    );
+  const token = jwt.sign(
+    { id: user._id, username: user.username },
+    JWT_SECRET,
+    { expiresIn: "2h" }
+  );
 
-    res.json({ token, username: user.username });
-})
+  res.json({ token, username: user.username });
+});
 
+// ====== Start Server ====== //
 app.listen(PORT, () => {
-    console.log(`server is running well with ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
