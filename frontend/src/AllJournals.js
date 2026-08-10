@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_URL from "./config";
+
+function authHeaders() {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+  };
+}
 
 function AllJournals({ username }) {
     const [entries, setEntries] = useState([]);
@@ -10,11 +18,18 @@ function AllJournals({ username }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("https://journal-backend-web.onrender.com/entries-all")
-            .then(res => res.json())
+        fetch(`${API_URL}/entries-all`, { headers: authHeaders() })
+            .then(res => {
+                if (res.status === 401) {
+                    alert("Session expired. Please login again.");
+                    navigate("/");
+                    throw new Error("Session expired");
+                }
+                return res.json();
+            })
             .then(data => setEntries(data))
-            .catch(err => console.error("error in fetching..."))
-    }, []);
+            .catch(err => console.error("error in fetching:", err))
+    }, [navigate]);
 
     const startEditing = (entry) => {
         setEditId(entry._id);
@@ -31,28 +46,35 @@ function AllJournals({ username }) {
     const handleUpdate = (e) => {
         e.preventDefault();
 
-        fetch(`https://journal-backend-web.onrender.com/entries/${editId}`, {
+        fetch(`${API_URL}/entries/${editId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders(),
             body: JSON.stringify({ title: editTitle, content: editContent }),
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`Update failed: ${res.status}`);
+                return res.json();
+            })
             .then(updated => {
                 //prev.map(...) loops over the existing list
                 setEntries(prev => prev.map(entry =>
                     entry._id === editId ? updated : entry  //checks.. if true, it replaces that entry with the new one
                 ));
                 cancelEdit();
-            });
+            })
+            .catch(err => console.error("error in updating:", err));
     };
 
     const handleDelete = (id) => {
-        fetch(`https://journal-backend-web.onrender.com/entries/${id}`, {
-            method: "DELETE"
+        fetch(`${API_URL}/entries/${id}`, {
+            method: "DELETE",
+            headers: authHeaders(),
         })
-            .then(() => {
+            .then(res => {
+                if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
                 setEntries(prev => prev.filter(entry => entry._id !== id));
-            });
+            })
+            .catch(err => console.error("error in deleting:", err));
     };
 
     return (

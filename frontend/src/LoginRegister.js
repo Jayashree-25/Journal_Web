@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import API_URL from "./config";
 
 export default function LoginRegister({ onLogin, onLogout, username }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,7 +9,7 @@ export default function LoginRegister({ onLogin, onLogout, username }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://journal-backend-web.onrender.com/${isLogin ? "login" : "register"}`;
+    const url = `${API_URL}/${isLogin ? "login" : "register"}`;
 
     try {
       const res = await fetch(url, {

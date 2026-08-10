@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import LoginRegister from "./LoginRegister";
 import AllJournals from "./AllJournals";
+import API_URL from "./config";
+
+function authHeaders() {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+  };
+}
 
 // Home page when user is logged in
 function JournalHome({ entries, setEntries, username, handleLogout }) {
@@ -15,31 +23,48 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   useEffect(() => {
     if (!username) return;
 
-    fetch(`https://journal-backend-web.onrender.com/entries?username=${username}`)
-      .then((res) => res.json())
+    fetch(`${API_URL}/entries?username=${encodeURIComponent(username)}`, {
+      headers: authHeaders(),
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          alert("Session expired. Please login again.");
+          handleLogout();
+          throw new Error("Session expired");
+        }
+        return res.json();
+      })
       .then((data) => setEntries(data))
-      .catch((err) => console.error("error in finding entries..!"));
-  }, [setEntries, username]);
+      .catch((err) => console.error("error in finding entries:", err));
+  }, [setEntries, username, handleLogout]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newEntry = { title, content, username };
-    fetch("https://journal-backend-web.onrender.com/entries", {
+    fetch(`${API_URL}/entries`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(newEntry),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Add entry failed: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         setEntries((prev) => [data, ...prev]);
         setTitle("");
         setContent("");
-      });
+      })
+      .catch((err) => console.error("error in adding entry:", err));
   };
 
   const handleDelete = (id) => {
-    fetch(`https://journal-backend-web.onrender.com/entries/${id}`, { method: "DELETE" })
-      .then(() => setEntries((prev) => prev.filter((e) => e._id !== id)));
+    fetch(`${API_URL}/entries/${id}`, { method: "DELETE", headers: authHeaders() })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+        setEntries((prev) => prev.filter((e) => e._id !== id));
+      })
+      .catch((err) => console.error("error in deleting entry:", err));
   };
 
   const startEditing = (entry) => {
@@ -56,18 +81,22 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    fetch(`https://journal-backend-web.onrender.com/entries/${editId}`, {
+    fetch(`${API_URL}/entries/${editId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify({ title: editTitle, content: editContent }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Update failed: ${res.status}`);
+        return res.json();
+      })
       .then((updated) => {
         setEntries((prev) =>
           prev.map((e) => (e._id === editId ? updated : e))
         );
         cancelEdit();
-      });
+      })
+      .catch((err) => console.error("error in updating entry:", err));
   };
 
   return (
