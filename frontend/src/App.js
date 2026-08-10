@@ -68,6 +68,7 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   const [deleteId, setDeleteId] = useState(null);
   const [sortBy, setSortBy] = useState("latest");
   const [sortOpen, setSortOpen] = useState(false);
+  const [menuAbove, setMenuAbove] = useState(false);
   const menuRef = useRef(null);
   const sortRef = useRef(null);
   const navigate = useNavigate();
@@ -77,11 +78,23 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
     const handleOutsideClick = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setOpenMenu(null);
+        setMenuAbove(false);
       }
     };
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [openMenu]);
+
+  const toggleMenu = (entryId, btn) => {
+    if (openMenu === entryId) {
+      setOpenMenu(null);
+      setMenuAbove(false);
+      return;
+    }
+    const rect = btn.getBoundingClientRect();
+    setMenuAbove(window.innerHeight - rect.bottom < 180);
+    setOpenMenu(entryId);
+  };
 
   useEffect(() => {
     if (!sortOpen) return;
@@ -361,12 +374,15 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
                           aria-label="Entry actions"
                           aria-haspopup="menu"
                           aria-expanded={openMenu === entry._id}
-                          onClick={() => setOpenMenu(openMenu === entry._id ? null : entry._id)}
+                          onClick={(e) => toggleMenu(entry._id, e.currentTarget)}
                         >
                           •••
                         </button>
                         {openMenu === entry._id && (
-                          <div className="journal-home__card-menu-drop" role="menu">
+                          <div
+                            className={`journal-home__card-menu-drop${menuAbove ? " journal-home__card-menu-drop--above" : ""}`}
+                            role="menu"
+                          >
                             <button type="button" role="menuitem" onClick={() => openEditorForEdit(entry)}>Edit entry</button>
                             <button type="button" role="menuitem" onClick={() => { setOpenMenu(null); setDeleteId(entry._id); }}>Delete entry</button>
                           </div>

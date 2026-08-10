@@ -475,6 +475,13 @@
   z-index: 1;
 }
 
+/* The head row must NOT create a stacking context: if it has one, the
+   dropdown's z-index is trapped inside it and later-DOM content (title,
+   body) paints above the dropdown. */
+.journal-home__card > .journal-home__card-head {
+  z-index: auto;
+}
+
 .journal-home__card--menu-open {
   z-index: 20;
 }
@@ -535,7 +542,7 @@
 .journal-home__card-menu-drop {
   position: absolute;
   right: 0;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   z-index: 60;
   width: 150px;
   box-sizing: border-box;
@@ -545,7 +552,12 @@
   background-color: #fffdf7;
   border: 1px solid #e4d8c7;
   border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(47, 41, 35, 0.12);
+  box-shadow: 0 8px 24px rgba(47, 41, 35, 0.14);
+}
+
+.journal-home__card-menu-drop--above {
+  top: auto;
+  bottom: calc(100% + 6px);
 }
 
 .journal-home__card-menu-drop button {
