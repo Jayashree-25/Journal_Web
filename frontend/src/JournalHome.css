@@ -1,0 +1,118 @@
+/* ============================================
+   Journal home — page structure & header
+   ============================================ */
+
+.journal-home {
+  min-height: 100vh;
+  background-color: #f3ebdd;
+  color: #2f2923;
+}
+
+.journal-home__container {
+  max-width: 1150px;
+  width: calc(100% - 40px);
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+/* --- Header --- */
+.journal-home__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem 2rem;
+  flex-wrap: wrap;
+  padding: 2.6rem 0 1.4rem;
+  border-bottom: 1px solid #d8cdbb;
+  margin-bottom: 2.6rem;
+}
+
+.journal-home__title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  font-size: 2.1rem;
+  line-height: 1;
+  color: #2f2923;
+  letter-spacing: -0.01em;
+}
+
+.journal-home__tagline {
+  margin: 0.45rem 0 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  color: #766b5f;
+}
+
+.journal-home__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.journal-home__user {
+  font-size: 0.92rem;
+  color: #766b5f;
+}
+
+.journal-home__user strong {
+  font-weight: 600;
+  color: #2f2923;
+}
+
+.journal-home__nav-link {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #8b5e3c;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.journal-home__nav-link:hover {
+  color: #6d452a;
+  text-decoration: underline;
+}
+
+.journal-home__logout {
+  padding: 0.5rem 1.05rem;
+  background: transparent;
+  border: 1px solid rgba(139, 94, 60, 0.35);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #8b5e3c;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.journal-home__logout:hover {
+  background: rgba(139, 94, 60, 0.08);
+  color: #6d452a;
+  border-color: rgba(139, 94, 60, 0.5);
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .journal-home__container {
+    width: calc(100% - 32px);
+  }
+
+  .journal-home__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.1rem;
+    padding-top: 2rem;
+    margin-bottom: 2.2rem;
+  }
+
+  .journal-home__actions {
+    gap: 1.1rem;
+  }
+}

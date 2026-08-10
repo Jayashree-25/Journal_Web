@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-route
 import LoginRegister from "./LoginRegister";
 import AllJournals from "./AllJournals";
 import API_URL from "./config";
+import "./JournalHome.css";
 
 function authHeaders() {
   return {
@@ -100,31 +101,28 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#282a36", minHeight: "100vh", padding: "2rem", color: "#f8f8f2" }}>
-      <div style={{ marginBottom: "1rem" }}>
-        <p>
-          Logged in as: <span style={{ color: "#50fa7b" }}>{username}</span>
-        </p>
-        <button onClick={handleLogout} style={{
-          backgroundColor: "#ff5555",
-          padding: "0.5rem",
-          borderRadius: "4px",
-          marginRight: "1rem",
-          color: "#fff",
-          border: "none",
-          cursor: "pointer"
-        }}>Logout</button>
+    <div className="journal-home">
+      <div className="journal-home__container">
+        <header className="journal-home__header">
+          <div>
+            <h1 className="journal-home__title">Journal</h1>
+            <p className="journal-home__tagline">your thoughts, your story</p>
+          </div>
 
-        <button onClick={() => navigate("/all-journals")} style={{
-          backgroundColor: "#8be9fd",
-          padding: "0.5rem",
-          borderRadius: "4px",
-          border: "none",
-          cursor: "pointer"
-        }}>View All Journals</button>
-      </div>
+          <div className="journal-home__actions">
+            <span className="journal-home__user">
+              Logged in as: <strong>{username}</strong>
+            </span>
+            <button className="journal-home__nav-link" onClick={() => navigate("/all-journals")}>
+              All entries →
+            </button>
+            <button className="journal-home__logout" onClick={handleLogout}>
+              Logout →
+            </button>
+          </div>
+        </header>
 
-      <h1 style={{ color: "#bd93f9", fontSize: "2.5rem" }}>My Journal</h1>
+        <h2 style={{ color: "#2f2923", fontSize: "2.5rem" }}>My Journal</h2>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Entry Title" required style={{
@@ -216,6 +214,7 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
           </li>
         ))}
       </ul>
+      </div>
     </div>
   );
 }
