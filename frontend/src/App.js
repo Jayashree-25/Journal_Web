@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import LoginRegister from "./LoginRegister";
 import AllJournals from "./AllJournals";
@@ -68,7 +68,31 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   const [deleteId, setDeleteId] = useState(null);
   const [sortBy, setSortBy] = useState("latest");
   const [sortOpen, setSortOpen] = useState(false);
+  const menuRef = useRef(null);
+  const sortRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!openMenu) return;
+    const handleOutsideClick = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [openMenu]);
+
+  useEffect(() => {
+    if (!sortOpen) return;
+    const handleOutsideClick = (event) => {
+      if (sortRef.current && !sortRef.current.contains(event.target)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [sortOpen]);
 
   useEffect(() => {
     if (!username) return;
@@ -257,7 +281,7 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
             <h3 className="journal-home__section-title">Your Journal</h3>
             <p className="journal-home__section-sub">Memories, thoughts and moments <span aria-hidden="true">✦</span></p>
           </div>
-          <div className="journal-home__sort">
+          <div className="journal-home__sort" ref={sortRef}>
             <button
               type="button"
               className="journal-home__sort-btn"
@@ -268,29 +292,26 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
               Sort by: {sortBy === "latest" ? "Latest" : "Oldest"} <span className="journal-home__sort-caret" aria-hidden="true">▾</span>
             </button>
             {sortOpen && (
-              <>
-                <div className="journal-home__card-menu-scrim" onClick={() => setSortOpen(false)} />
-                <div className="journal-home__sort-drop" role="listbox">
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={sortBy === "latest"}
-                    className={sortBy === "latest" ? "journal-home__sort-option journal-home__sort-option--active" : "journal-home__sort-option"}
-                    onClick={() => { setSortBy("latest"); setSortOpen(false); }}
-                  >
-                    Latest
-                  </button>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={sortBy === "oldest"}
-                    className={sortBy === "oldest" ? "journal-home__sort-option journal-home__sort-option--active" : "journal-home__sort-option"}
-                    onClick={() => { setSortBy("oldest"); setSortOpen(false); }}
-                  >
-                    Oldest
-                  </button>
-                </div>
-              </>
+              <div className="journal-home__sort-drop" role="listbox">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={sortBy === "latest"}
+                  className={sortBy === "latest" ? "journal-home__sort-option journal-home__sort-option--active" : "journal-home__sort-option"}
+                  onClick={() => { setSortBy("latest"); setSortOpen(false); }}
+                >
+                  Latest
+                </button>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={sortBy === "oldest"}
+                  className={sortBy === "oldest" ? "journal-home__sort-option journal-home__sort-option--active" : "journal-home__sort-option"}
+                  onClick={() => { setSortBy("oldest"); setSortOpen(false); }}
+                >
+                  Oldest
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -310,7 +331,10 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
         ) : (
           <ul className={`journal-home__grid ${entries.length === 1 ? "journal-home__grid--single" : ""}`}>
             {sortedEntries.map((entry, index) => (
-              <li key={entry._id} className="journal-home__card">
+              <li
+                key={entry._id}
+                className={`journal-home__card ${openMenu === entry._id ? "journal-home__card--menu-open" : ""}`}
+              >
                 {(index % 3 === 0 || index % 3 === 1) && (
                   <CardFlora corner={index % 3 === 0 ? "tr" : "bl"} />
                 )}
@@ -327,7 +351,10 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
                   <>
                     <div className="journal-home__card-head">
                       <span className="journal-home__card-date">{formatCardDate(entry.date)}</span>
-                      <div className="journal-home__card-menu">
+                      <div
+                        className="journal-home__card-menu"
+                        ref={openMenu === entry._id ? menuRef : null}
+                      >
                         <button
                           type="button"
                           className="journal-home__card-menu-btn"
@@ -339,13 +366,10 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
                           •••
                         </button>
                         {openMenu === entry._id && (
-                          <>
-                            <div className="journal-home__card-menu-scrim" onClick={() => setOpenMenu(null)} />
-                            <div className="journal-home__card-menu-drop" role="menu">
-                              <button type="button" role="menuitem" onClick={() => openEditorForEdit(entry)}>Edit entry</button>
-                              <button type="button" role="menuitem" onClick={() => { setOpenMenu(null); setDeleteId(entry._id); }}>Delete entry</button>
-                            </div>
-                          </>
+                          <div className="journal-home__card-menu-drop" role="menu">
+                            <button type="button" role="menuitem" onClick={() => openEditorForEdit(entry)}>Edit entry</button>
+                            <button type="button" role="menuitem" onClick={() => { setOpenMenu(null); setDeleteId(entry._id); }}>Delete entry</button>
+                          </div>
                         )}
                       </div>
                     </div>

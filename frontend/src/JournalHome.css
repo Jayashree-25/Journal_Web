@@ -396,34 +396,35 @@
 .journal-home__sort-drop {
   position: absolute;
   right: 0;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   z-index: 60;
-  min-width: 150px;
+  width: 150px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 0.35rem;
-  background: #fffdf7;
-  border: 1px solid rgba(139, 94, 60, 0.18);
+  padding: 6px;
+  background-color: #fffdf7;
+  border: 1px solid #e4d8c7;
   border-radius: 8px;
-  box-shadow: 0 12px 26px -12px rgba(93, 74, 50, 0.35);
+  box-shadow: 0 8px 20px rgba(47, 41, 35, 0.12);
 }
 
 .journal-home__sort-option {
-  padding: 0.5rem 0.8rem;
+  width: 100%;
+  padding: 10px 12px;
   text-align: left;
-  background: none;
+  background: transparent;
   border: none;
   border-radius: 6px;
   font-family: inherit;
   font-size: 0.9rem;
   color: #2f2923;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
 .journal-home__sort-option:hover {
-  background: rgba(139, 94, 60, 0.08);
-  color: #8b5e3c;
+  background-color: #f6efe2;
 }
 
 .journal-home__sort-option--active {
@@ -474,6 +475,10 @@
   z-index: 1;
 }
 
+.journal-home__card--menu-open {
+  z-index: 20;
+}
+
 .journal-home__card-flora {
   position: absolute;
   z-index: 0;
@@ -509,6 +514,7 @@
 
 .journal-home__card-menu {
   position: relative;
+  z-index: 5;
 }
 
 .journal-home__card-menu-btn {
@@ -526,43 +532,46 @@
   color: #2f2923;
 }
 
-.journal-home__card-menu-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-}
-
 .journal-home__card-menu-drop {
   position: absolute;
   right: 0;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   z-index: 60;
-  min-width: 150px;
+  width: 150px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 0.35rem;
-  background: #fffdf7;
-  border: 1px solid rgba(139, 94, 60, 0.18);
+  padding: 6px;
+  background-color: #fffdf7;
+  border: 1px solid #e4d8c7;
   border-radius: 8px;
-  box-shadow: 0 12px 26px -12px rgba(93, 74, 50, 0.35);
+  box-shadow: 0 8px 20px rgba(47, 41, 35, 0.12);
 }
 
 .journal-home__card-menu-drop button {
-  padding: 0.5rem 0.8rem;
+  width: 100%;
+  padding: 10px 12px;
   text-align: left;
-  background: none;
+  background: transparent;
   border: none;
   border-radius: 6px;
   font-family: inherit;
   font-size: 0.9rem;
   color: #2f2923;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
 .journal-home__card-menu-drop button:hover {
-  background: rgba(139, 94, 60, 0.08);
-  color: #8b5e3c;
+  background-color: #f6efe2;
+}
+
+.journal-home__card-menu-drop button:last-child {
+  color: #9c4532;
+}
+
+.journal-home__card-menu-drop button:last-child:hover {
+  background-color: #f7ece7;
 }
 
 .journal-home__card-title {
