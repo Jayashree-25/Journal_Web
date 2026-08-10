@@ -1,0 +1,366 @@
+/* ============================================
+   Login / Register — "Open Journal" design
+   ============================================ */
+
+.journal-login {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  background-color: #f3ebdd;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* --- Journal container (two connected pages) --- */
+.journal {
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
+  width: min(1200px, 100%);
+  height: clamp(600px, 84vh, 840px);
+  background-color: #fffdf7;
+  border: 1px solid rgba(139, 94, 60, 0.16);
+  border-radius: 16px;
+  box-shadow:
+    0 24px 60px -24px rgba(93, 74, 50, 0.28),
+    0 4px 14px -6px rgba(93, 74, 50, 0.12);
+  overflow: hidden;
+  animation: journalIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.journal__page {
+  position: relative;
+  display: flex;
+  background-color: #fffdf7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.045'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- Center spine --- */
+.journal__spine {
+  background: linear-gradient(
+    to bottom,
+    rgba(139, 94, 60, 0.12),
+    rgba(139, 94, 60, 0.03) 14%,
+    rgba(139, 94, 60, 0.03) 86%,
+    rgba(139, 94, 60, 0.12)
+  );
+  box-shadow: inset 0 0 0 1px rgba(47, 41, 35, 0.05);
+}
+
+/* --- Left page: branding --- */
+.journal__page--left {
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.75rem, 4vw, 3.25rem);
+}
+
+.journal__title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  font-size: clamp(3.25rem, 6vw, 5rem);
+  line-height: 1;
+  color: #2f2923;
+  letter-spacing: -0.01em;
+}
+
+.journal__tagline {
+  margin: 1rem 0 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: #766b5f;
+}
+
+.journal__divider {
+  display: block;
+  width: 64px;
+  height: 1px;
+  margin: 2.2rem 0;
+  background: linear-gradient(
+    to right,
+    rgba(139, 94, 60, 0.55),
+    rgba(139, 94, 60, 0.08)
+  );
+}
+
+.journal__quote {
+  margin: 0;
+  max-width: 26ch;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  line-height: 1.6;
+  color: #766b5f;
+}
+
+.journal__pen {
+  width: 22px;
+  height: 22px;
+  margin-top: 1.6rem;
+  opacity: 0.55;
+}
+
+.journal__botanical {
+  position: absolute;
+  left: clamp(1.25rem, 3vw, 2rem);
+  bottom: clamp(1rem, 2.5vw, 1.75rem);
+  width: clamp(70px, 10vw, 120px);
+  height: auto;
+  pointer-events: none;
+}
+
+/* --- Right page: form --- */
+.journal__page--right {
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 4.5vw, 3.5rem);
+  box-shadow: inset 1px 0 0 rgba(47, 41, 35, 0.05);
+  animation: journalFade 0.5s ease 0.18s both;
+}
+
+.journal__form {
+  width: min(100%, 360px);
+}
+
+.journal__form-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2rem, 3.4vw, 2.5rem);
+  color: #2f2923;
+}
+
+.journal__form-sub {
+  margin: 0.55rem 0 0;
+  font-size: 0.98rem;
+  color: #766b5f;
+}
+
+.journal__notice {
+  margin: 1.4rem 0 0;
+  padding: 0.7rem 0.95rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.journal__notice--error {
+  color: #9c4532;
+  background: rgba(156, 69, 50, 0.07);
+  border-color: rgba(156, 69, 50, 0.22);
+}
+
+.journal__notice--success {
+  color: #5f6650;
+  background: rgba(122, 128, 104, 0.1);
+  border-color: rgba(122, 128, 104, 0.28);
+}
+
+.journal__form-fields {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2.1rem;
+}
+
+.journal__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.journal__field label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #766b5f;
+}
+
+.journal__field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0 0.65rem;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  color: #2f2923;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(118, 107, 95, 0.45);
+  border-radius: 0;
+  appearance: none;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.journal__field input::placeholder {
+  color: rgba(118, 107, 95, 0.45);
+}
+
+.journal__field input:hover {
+  border-bottom-color: rgba(139, 94, 60, 0.6);
+}
+
+.journal__field input:focus {
+  outline: none;
+  border-bottom-color: #8b5e3c;
+  box-shadow: 0 1px 0 0 #8b5e3c;
+}
+
+.journal__field input:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #fffdf7 inset;
+  -webkit-text-fill-color: #2f2923;
+}
+
+/* --- Submit button --- */
+.journal__submit {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.95rem 1.5rem;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #fffdf7;
+  background-color: #8b5e3c;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.journal__submit:hover:not(:disabled) {
+  background-color: #7a5234;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -8px rgba(139, 94, 60, 0.5);
+}
+
+.journal__submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.journal__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* --- Register / login toggle --- */
+.journal__toggle {
+  margin: 1.6rem 0 0;
+  text-align: center;
+  font-size: 0.92rem;
+  color: #766b5f;
+}
+
+.journal__toggle-link {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  color: #8b5e3c;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.journal__toggle-link:hover {
+  color: #6d452a;
+  text-decoration: underline;
+}
+
+/* --- Animations --- */
+@keyframes journalIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes journalFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal,
+  .journal__page--right {
+    animation: none;
+  }
+}
+
+/* --- Responsive: stacked single-page layout --- */
+@media (max-width: 920px) {
+  .journal {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    width: min(560px, 100%);
+    height: auto;
+    border-radius: 14px;
+  }
+
+  .journal__spine {
+    display: none;
+  }
+
+  .journal__page--left {
+    align-items: center;
+    text-align: center;
+    padding: 2.4rem 1.75rem 1.75rem;
+    border-bottom: 1px solid rgba(139, 94, 60, 0.14);
+  }
+
+  .journal__divider {
+    margin: 1.6rem auto;
+  }
+
+  .journal__quote {
+    max-width: 30ch;
+  }
+
+  .journal__pen {
+    margin: 1.4rem auto 0;
+  }
+
+  .journal__botanical {
+    display: none;
+  }
+
+  .journal__page--right {
+    box-shadow: none;
+    padding: 2.4rem 1.75rem 2.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .journal-login {
+    padding: 0.9rem;
+  }
+
+  .journal {
+    border-radius: 12px;
+  }
+
+  .journal__title {
+    font-size: 2.7rem;
+  }
+
+  .journal__page--left {
+    padding: 2rem 1.4rem 1.5rem;
+  }
+
+  .journal__page--right {
+    padding: 2.1rem 1.4rem 2.4rem;
+  }
+}
