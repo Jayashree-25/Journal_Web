@@ -12,6 +12,13 @@ function authHeaders() {
   };
 }
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 // Home page when user is logged in
 function JournalHome({ entries, setEntries, username, handleLogout }) {
   const [title, setTitle] = useState("");
@@ -122,7 +129,15 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
           </div>
         </header>
 
-        <h2 style={{ color: "#2f2923", fontSize: "2.5rem" }}>My Journal</h2>
+        <div className="journal-home__greeting">
+          <h2 className="journal-home__greeting-title">
+            {getGreeting()}, {username}.
+          </h2>
+          <svg className="journal-home__greeting-underline" viewBox="0 0 210 10" fill="none" aria-hidden="true">
+            <path d="M3 6 C 30 3.5, 55 8, 85 5.5 C 115 3, 145 8, 170 6 C 183 5.2, 194 5.8, 207 5.2" stroke="#8B5E3C" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <p className="journal-home__greeting-sub">What&rsquo;s on your mind today?</p>
+        </div>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Entry Title" required style={{
