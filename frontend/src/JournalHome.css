@@ -280,8 +280,29 @@
 
 .journal-home__editor-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 0.75rem;
   margin-top: 1.6rem;
+}
+
+.journal-home__editor-cancel {
+  padding: 0.75rem 1.4rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #766b5f;
+  background: transparent;
+  border: 1px solid rgba(118, 107, 95, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.journal-home__editor-cancel:hover {
+  color: #2f2923;
+  border-color: rgba(118, 107, 95, 0.7);
+  background: rgba(139, 94, 60, 0.06);
 }
 
 .journal-home__save {
@@ -338,10 +359,76 @@
 }
 
 .journal-home__sort {
+  position: relative;
+}
+
+.journal-home__sort-btn {
+  padding: 0.45rem 0.9rem;
+  font-family: inherit;
   font-size: 0.9rem;
   color: #766b5f;
-  letter-spacing: 0.02em;
+  background: #fffdf7;
+  border: 1px solid rgba(139, 94, 60, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
   white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.journal-home__sort-btn:hover {
+  color: #2f2923;
+  border-color: rgba(139, 94, 60, 0.45);
+  background: #fffaf0;
+}
+
+.journal-home__sort-caret {
+  display: inline-block;
+  margin-left: 0.2rem;
+  font-size: 0.75rem;
+  color: #8b5e3c;
+  transition: transform 0.2s ease;
+}
+
+.journal-home__sort-btn[aria-expanded="true"] .journal-home__sort-caret {
+  transform: rotate(180deg);
+}
+
+.journal-home__sort-drop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 60;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.35rem;
+  background: #fffdf7;
+  border: 1px solid rgba(139, 94, 60, 0.18);
+  border-radius: 8px;
+  box-shadow: 0 12px 26px -12px rgba(93, 74, 50, 0.35);
+}
+
+.journal-home__sort-option {
+  padding: 0.5rem 0.8rem;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #2f2923;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.journal-home__sort-option:hover {
+  background: rgba(139, 94, 60, 0.08);
+  color: #8b5e3c;
+}
+
+.journal-home__sort-option--active {
+  color: #8b5e3c;
+  font-weight: 600;
 }
 
 /* ============================================
@@ -353,21 +440,28 @@
   margin: 2rem 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.4rem;
+}
+
+.journal-home__grid--single .journal-home__card {
+  grid-column: 1 / -1;
+  min-height: 200px;
 }
 
 .journal-home__card {
   position: relative;
   display: flex;
   flex-direction: column;
+  min-height: 200px;
+  box-sizing: border-box;
   background-color: #fffdf7;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.045'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   border: 1px solid rgba(139, 94, 60, 0.15);
   border-radius: 8px;
   box-shadow: 0 6px 16px -10px rgba(93, 74, 50, 0.25);
-  padding: 1.35rem 1.4rem 1.45rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 24px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
 .journal-home__card:hover {
@@ -435,15 +529,15 @@
 .journal-home__card-menu-scrim {
   position: fixed;
   inset: 0;
-  z-index: 9;
+  z-index: 40;
 }
 
 .journal-home__card-menu-drop {
   position: absolute;
   right: 0;
   top: calc(100% + 6px);
-  z-index: 10;
-  min-width: 130px;
+  z-index: 60;
+  min-width: 150px;
   display: flex;
   flex-direction: column;
   padding: 0.35rem;
@@ -502,85 +596,100 @@
   color: rgba(118, 107, 95, 0.85);
 }
 
-/* --- Card edit mode --- */
-.journal-home__card-edit {
-  display: grid;
-  gap: 0.8rem;
+/* --- Card delete confirmation --- */
+.journal-home__card-confirm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.1rem;
+  flex: 1;
 }
 
-.journal-home__card-edit input,
-.journal-home__card-edit textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.45rem 0 0.55rem;
-  font-family: inherit;
-  font-size: 0.95rem;
+.journal-home__card-confirm-text {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+  font-weight: 600;
   color: #2f2923;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(118, 107, 95, 0.4);
-  border-radius: 0;
-  transition: border-color 0.2s ease;
 }
 
-.journal-home__card-edit textarea {
-  min-height: 120px;
-  resize: vertical;
-  line-height: 1.6;
-}
-
-.journal-home__card-edit input:focus,
-.journal-home__card-edit textarea:focus {
-  outline: none;
-  border-bottom-color: #8b5e3c;
-}
-
-.journal-home__card-edit-actions {
+.journal-home__card-confirm-actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.2rem;
 }
 
-.journal-home__card-edit-save,
-.journal-home__card-edit-cancel {
+.journal-home__card-confirm-cancel,
+.journal-home__card-confirm-delete {
   padding: 0.45rem 1rem;
   font-family: inherit;
   font-size: 0.88rem;
   border-radius: 7px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.journal-home__card-edit-save {
-  background: #8b5e3c;
-  color: #fffdf7;
-  border: 1px solid #8b5e3c;
-}
-
-.journal-home__card-edit-save:hover {
-  background: #7a5234;
-}
-
-.journal-home__card-edit-cancel {
+.journal-home__card-confirm-cancel {
   background: transparent;
   color: #766b5f;
   border: 1px solid rgba(118, 107, 95, 0.4);
 }
 
-.journal-home__card-edit-cancel:hover {
+.journal-home__card-confirm-cancel:hover {
   color: #2f2923;
   border-color: rgba(118, 107, 95, 0.7);
+}
+
+.journal-home__card-confirm-delete {
+  background: #9c4532;
+  color: #fffdf7;
+  border: 1px solid #9c4532;
+}
+
+.journal-home__card-confirm-delete:hover {
+  background: #853a29;
 }
 
 /* --- Empty state --- */
 .journal-home__empty {
   margin: 2rem 0 0;
-  padding: 2rem;
+  padding: 2.6rem 2rem;
   text-align: center;
-  font-size: 0.98rem;
-  color: #766b5f;
   border: 1px dashed rgba(139, 94, 60, 0.28);
   border-radius: 8px;
+  background-color: rgba(255, 253, 247, 0.5);
+}
+
+.journal-home__empty-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2f2923;
+}
+
+.journal-home__empty-sub {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: #766b5f;
+}
+
+.journal-home__empty-btn {
+  margin-top: 1.4rem;
+  padding: 0.6rem 1.4rem;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #fffdf7;
+  background-color: #8b5e3c;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.journal-home__empty-btn:hover {
+  background-color: #7a5234;
+  transform: translateY(-1px);
 }
 
 /* --- Responsive (editor & cards) --- */

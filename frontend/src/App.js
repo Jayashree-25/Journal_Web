@@ -64,9 +64,10 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [editId, setEditId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editContent, setEditContent] = useState("");
   const [openMenu, setOpenMenu] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [sortBy, setSortBy] = useState("latest");
+  const [sortOpen, setSortOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,8 +88,42 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
       .catch((err) => console.error("error in finding entries:", err));
   }, [setEntries, username, handleLogout]);
 
+  const resetEditor = () => {
+    setEditId(null);
+    setTitle("");
+    setContent("");
+  };
+
+  const openEditorForEdit = (entry) => {
+    setEditId(entry._id);
+    setTitle(entry.title);
+    setContent(entry.content);
+    setOpenMenu(null);
+    document.getElementById("entry-title")?.focus();
+    document.getElementById("entry-title")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (editId) {
+      fetch(`${API_URL}/entries/${editId}`, {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({ title, content }),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(`Update failed: ${res.status}`);
+          return res.json();
+        })
+        .then((updated) => {
+          setEntries((prev) => prev.map((entry) => (entry._id === editId ? updated : entry)));
+          resetEditor();
+        })
+        .catch((err) => console.error("error in updating entry:", err));
+      return;
+    }
+
     const newEntry = { title, content, username };
     fetch(`${API_URL}/entries`, {
       method: "POST",
@@ -112,41 +147,16 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
       .then((res) => {
         if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
         setEntries((prev) => prev.filter((e) => e._id !== id));
+        setDeleteId(null);
       })
       .catch((err) => console.error("error in deleting entry:", err));
   };
 
-  const startEditing = (entry) => {
-    setEditId(entry._id);
-    setEditTitle(entry.title);
-    setEditContent(entry.content);
-  };
-
-  const cancelEdit = () => {
-    setEditId(null);
-    setEditTitle("");
-    setEditContent("");
-  };
-
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    fetch(`${API_URL}/entries/${editId}`, {
-      method: "PUT",
-      headers: authHeaders(),
-      body: JSON.stringify({ title: editTitle, content: editContent }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Update failed: ${res.status}`);
-        return res.json();
-      })
-      .then((updated) => {
-        setEntries((prev) =>
-          prev.map((e) => (e._id === editId ? updated : e))
-        );
-        cancelEdit();
-      })
-      .catch((err) => console.error("error in updating entry:", err));
-  };
+  const sortedEntries = [...entries].sort((a, b) => {
+    const ta = new Date(a.date).getTime();
+    const tb = new Date(b.date).getTime();
+    return sortBy === "latest" ? tb - ta : ta - tb;
+  });
 
   return (
     <div className="journal-home">
@@ -198,8 +208,10 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
           <div className="journal-home__editor-head">
             <QuillIllustration />
             <div>
-              <h3 className="journal-home__editor-title">New Journal Entry</h3>
-              <p className="journal-home__editor-sub">Capture your thoughts, ideas and memories.</p>
+              <h3 className="journal-home__editor-title">{editId ? "Edit Journal Entry" : "New Journal Entry"}</h3>
+              <p className="journal-home__editor-sub">
+                {editId ? "Make changes to your entry." : "Capture your thoughts, ideas and memories."}
+              </p>
             </div>
           </div>
 
@@ -228,7 +240,14 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
               </div>
             </div>
             <div className="journal-home__editor-actions">
-              <button type="submit" className="journal-home__save">Save Entry →</button>
+              {editId && (
+                <button type="button" className="journal-home__editor-cancel" onClick={resetEditor}>
+                  Cancel
+                </button>
+              )}
+              <button type="submit" className="journal-home__save">
+                {editId ? "Save Changes →" : "Save Entry →"}
+              </button>
             </div>
           </form>
         </div>
@@ -238,29 +257,74 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
             <h3 className="journal-home__section-title">Your Journal</h3>
             <p className="journal-home__section-sub">Memories, thoughts and moments <span aria-hidden="true">✦</span></p>
           </div>
-          <span className="journal-home__sort">Sort by: Latest ˅</span>
+          <div className="journal-home__sort">
+            <button
+              type="button"
+              className="journal-home__sort-btn"
+              onClick={() => setSortOpen(!sortOpen)}
+              aria-haspopup="listbox"
+              aria-expanded={sortOpen}
+            >
+              Sort by: {sortBy === "latest" ? "Latest" : "Oldest"} <span className="journal-home__sort-caret" aria-hidden="true">▾</span>
+            </button>
+            {sortOpen && (
+              <>
+                <div className="journal-home__card-menu-scrim" onClick={() => setSortOpen(false)} />
+                <div className="journal-home__sort-drop" role="listbox">
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={sortBy === "latest"}
+                    className={sortBy === "latest" ? "journal-home__sort-option journal-home__sort-option--active" : "journal-home__sort-option"}
+                    onClick={() => { setSortBy("latest"); setSortOpen(false); }}
+                  >
+                    Latest
+                  </button>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={sortBy === "oldest"}
+                    className={sortBy === "oldest" ? "journal-home__sort-option journal-home__sort-option--active" : "journal-home__sort-option"}
+                    onClick={() => { setSortBy("oldest"); setSortOpen(false); }}
+                  >
+                    Oldest
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {entries.length === 0 ? (
-          <p className="journal-home__empty">Your pages are waiting — write your first entry above.</p>
+          <div className="journal-home__empty">
+            <p className="journal-home__empty-title">Your journal is waiting.</p>
+            <p className="journal-home__empty-sub">Start writing your first entry and give your thoughts a place to live.</p>
+            <button
+              type="button"
+              className="journal-home__empty-btn"
+              onClick={() => document.getElementById("entry-title")?.focus()}
+            >
+              + Create your first entry
+            </button>
+          </div>
         ) : (
-          <ul className="journal-home__grid">
-            {entries.map((entry, index) => (
+          <ul className={`journal-home__grid ${entries.length === 1 ? "journal-home__grid--single" : ""}`}>
+            {sortedEntries.map((entry, index) => (
               <li key={entry._id} className="journal-home__card">
-                {editId === entry._id ? (
-                  <form onSubmit={handleUpdate} className="journal-home__card-edit">
-                    <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder="Title" required />
-                    <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} placeholder="Your thoughts..." required />
-                    <div className="journal-home__card-edit-actions">
-                      <button type="submit" className="journal-home__card-edit-save">Save</button>
-                      <button type="button" onClick={cancelEdit} className="journal-home__card-edit-cancel">Cancel</button>
+                {(index % 3 === 0 || index % 3 === 1) && (
+                  <CardFlora corner={index % 3 === 0 ? "tr" : "bl"} />
+                )}
+
+                {deleteId === entry._id ? (
+                  <div className="journal-home__card-confirm" role="alertdialog" aria-label="Delete entry confirmation">
+                    <p className="journal-home__card-confirm-text">Delete this journal entry?</p>
+                    <div className="journal-home__card-confirm-actions">
+                      <button type="button" className="journal-home__card-confirm-cancel" onClick={() => setDeleteId(null)}>Cancel</button>
+                      <button type="button" className="journal-home__card-confirm-delete" onClick={() => handleDelete(entry._id)}>Delete</button>
                     </div>
-                  </form>
+                  </div>
                 ) : (
                   <>
-                    {(index % 3 === 0 || index % 3 === 1) && (
-                      <CardFlora corner={index % 3 === 0 ? "tr" : "bl"} />
-                    )}
                     <div className="journal-home__card-head">
                       <span className="journal-home__card-date">{formatCardDate(entry.date)}</span>
                       <div className="journal-home__card-menu">
@@ -268,6 +332,8 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
                           type="button"
                           className="journal-home__card-menu-btn"
                           aria-label="Entry actions"
+                          aria-haspopup="menu"
+                          aria-expanded={openMenu === entry._id}
                           onClick={() => setOpenMenu(openMenu === entry._id ? null : entry._id)}
                         >
                           •••
@@ -275,9 +341,9 @@ function JournalHome({ entries, setEntries, username, handleLogout }) {
                         {openMenu === entry._id && (
                           <>
                             <div className="journal-home__card-menu-scrim" onClick={() => setOpenMenu(null)} />
-                            <div className="journal-home__card-menu-drop">
-                              <button type="button" onClick={() => { setOpenMenu(null); startEditing(entry); }}>Edit</button>
-                              <button type="button" onClick={() => { setOpenMenu(null); handleDelete(entry._id); }}>Delete</button>
+                            <div className="journal-home__card-menu-drop" role="menu">
+                              <button type="button" role="menuitem" onClick={() => openEditorForEdit(entry)}>Edit entry</button>
+                              <button type="button" role="menuitem" onClick={() => { setOpenMenu(null); setDeleteId(entry._id); }}>Delete entry</button>
                             </div>
                           </>
                         )}
